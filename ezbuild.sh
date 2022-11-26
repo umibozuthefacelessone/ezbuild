@@ -26,16 +26,34 @@ init() {
 
         echo -e "class ${PROJECT} {\n\tpublic static void main(String[] args) {\n\t\tSystem.out.println(\"Hello, World!\");\n\t}\n}" > $PROJECT/src/main/java/$PROJECT.java
 
-        echo "Build of ${PROJECT} successful!"
+        echo "Initial setup of ${PROJECT} successful!"
 }
 
 build() {
         javac $PROJECT/src/main/java/$PROJECT.java
         mv $PROJECT/src/main/java/*.class $PROJECT/target
+        echo "Build of ${PROJECT} successful!"
 }
 
 run() {
         java $PROJECT/src/main/java/$PROJECT.java
+}
+
+delete() {
+        read -p "Are you sure want to delete ${PROJECT}? This will delete the project forever. (y/n): " confirm
+        if [ $confirm == "y" ]
+        then
+                rm -rf $PROJECT
+                ls
+        fi
+}
+
+ship() {
+        mkdir $PROJECT/target/dist
+        touch $PROJECT/manifest.mf
+        echo "Main-Class: ${PROJECT}\n" > $PROJECT/manifest.mf
+        jar -cvmf $PROJECT/manifest.mf $PROJECT/target/dist/$PROJECT.jar $PROJECT/target/*.class
+        echo "Successfully made ${PROJECT} jar file! (check the target directory)"
 }
 
 $1
